@@ -261,86 +261,72 @@ console.log(sucursalDelMes(1, 2019)); // "Centro"
 
 
 const renderPorMes = () => {
-  let enero = 0;
-  let febrero = 0;
 
-  const obtengoMesEnero = ventas =>
-    (ventas.fecha.getMonth() === 0) &&
-    (ventas.fecha.getFullYear() === 2019);
-  const filtroMesEnero = local.ventas.filter(obtengoMesEnero);
+  meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto",
+    "Septiembre", "Octubre", "Noviembre", "diciembre"]
+  ventasTotales = [];
 
-  filtroMesEnero.forEach(venta => {
-    venta.componentes.forEach(v => {
-      enero += precioMaquina(v)
+  for (let i = 0; i < meses.length; i++) {
+    const obtengoMes = ventas =>
+      (ventas.fecha.getMonth() === i);
+    const filtroMes = local.ventas.filter(obtengoMes);
+
+    let ventaDelMes = 0;
+    filtroMes.forEach(venta => {
+      venta.componentes.forEach(v => {
+        ventaDelMes += precioMaquina(v)
+      });
     });
-  });
 
-  const obtengoMesFebrero = ventas =>
-    (ventas.fecha.getMonth() === 1) &&
-    (ventas.fecha.getFullYear() === 2019);
-  const filtroMesFebrero = local.ventas.filter(obtengoMesFebrero);
-
-  filtroMesFebrero.forEach(venta => {
-    venta.componentes.forEach(v => {
-      febrero += precioMaquina(v)
-    });
-  });
-
-  const resultado = `Ventas por mes:
-  Total de enero 2019: ${enero}
-  Total de febrero 2019: ${febrero}`
-
+    ventasTotales.push({ mes: meses[i], year: 2019, ventas: ventaDelMes })
+  }
+  let resultado = `Ventas por mes: \n`
+  ventasTotales.forEach(venta => {
+    if (venta.ventas > 0) {
+      resultado += `Total de ${venta.mes} ${venta.year}: ${venta.ventas} \n`
+    }
+  })
   return resultado;
 }
 console.log(renderPorMes());
 
-// renderPorSucursal(): Muestra una lista del importe total vendido por cada sucursal
+
+
 const renderPorSucursal = () => {
+  let ventasDeSucursales = [];
 
-  let caballito = 0;
-  let centro = 0;
+  local.sucursales.forEach(sucursal => {
+    const obtengoSucursal = local.ventas.filter(venta => venta.sucursal === sucursal)
+    let ventaDeLaSucursal = 0
 
-  const obtengoSucursalCaballito = ventas =>
-    (ventas.sucursal === "Caballito");
-  const filtroSucursalCaballito = local.ventas.filter(obtengoSucursalCaballito);
-
-  filtroSucursalCaballito.forEach(venta => {
-    venta.componentes.forEach(v => {
-      caballito += precioMaquina(v)
+    obtengoSucursal.forEach(venta => {
+      venta.componentes.forEach(v => {
+        ventaDeLaSucursal += precioMaquina(v)
+      });
     });
+      
+    ventasDeSucursales.push({ sucursal: sucursal, ventas: ventaDeLaSucursal })
   });
-
-  const obtengoSucursalCentro = ventas =>
-    (ventas.sucursal === "Centro");
-  const filtroSucursalCentro = local.ventas.filter(obtengoSucursalCentro);
-
-  filtroSucursalCentro.forEach(venta => {
-    venta.componentes.forEach(v => {
-      centro += precioMaquina(v)
-    });
-  });
-
-  const resultado = `Ventas por sucursal:
-  Total de Centro: ${centro}
-  Total de Caballito: ${caballito}`
-
+  let resultado = `Ventas por sucursal: \n`
+  ventasDeSucursales.forEach(venta => {
+    resultado += `Total de ${venta.sucursal}: ${venta.ventas} \n`
+  })
   return resultado;
-
-
 }
+
 console.log(renderPorSucursal());
 
 // render(): Tiene que mostrar la unión de los dos reportes anteriores, 
 // cual fue el producto más vendido y la vendedora que más ingresos generó
 
-const render = ()=>{
+const render = () => {
 
 
   renderPorMes();
   renderPorSucursal();
 }
 
-console.log( render() );
+console.log(render());
 // Reporte
 // Ventas por mes:
 //   Total de enero 2019: 1250
